@@ -18,7 +18,7 @@
 #
 # Pull base image
 # ---------------
-FROM oracle/database:12.2.0.1-ee
+FROM oracle/database:12.2.0.1-ee as builder
 
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
@@ -43,3 +43,23 @@ USER oracle
 RUN chmod ug+x $PATCH_INSTALL_DIR/*.sh && \
     sync && \
     $PATCH_INSTALL_DIR/$PATCH_FILE
+
+
+# FROM oracle/database:12.2.0.1-ee
+# 重新执行最后一层的构建
+FROM 472d0e04b73ae54ddb03c12fcdee3ad095b216eb02ce35cccdc2d19790b862d1
+
+USER oracle
+COPY --chown=oracle:dba --from=builder $ORACLE_BASE $ORACLE_BASE
+
+USER root 
+
+RUN $ORACLE_BASE/oraInventory/orainstRoot.sh && $ORACLE_HOME/root.sh 
+
+USER oracle
+WORKDIR /home/oracle 
+
+HEALTHCHECK --interval=1m --start-period=5m \
+  CMD "$ORACLE_BASE/$CHECK_DB_FILE" >/dev/null || exit 1
+
+CMD exec $ORACLE_BASE/$RUN_FILE

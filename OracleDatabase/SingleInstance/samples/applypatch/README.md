@@ -1,5 +1,11 @@
 Example of how to create a patched database image
-=============================================
+
+
+修改点：
+1. patches下面直接放展开的补丁目录，要求每个都能正常`opath apply`
+2. 镜像补丁改为多步运行，用于缩减镜像大小。12.2.0.1原始6G，打到202104的补丁现在8G
+
+===========================================
 Once you have built your base image you can create a patched version of it.
 In order to build such an image you will have to provide the patch zip file.
 Note: Some patches require a newer version of `OPatch`, the Oracle Interim Patch Installer utility.

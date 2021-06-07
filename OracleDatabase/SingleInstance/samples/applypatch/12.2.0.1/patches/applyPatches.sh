@@ -31,27 +31,18 @@ fi;
 for file in `ls -d */`; do
    # Go into sub directory (cd 001)
    cd $file;
-   # Unzip the actual patch (unzip pNNNNNNN.zip)
-   unzip -o *.zip;
-   # Go into patch directory (cd NNNNNNN)
-   cd */
+
    # Apply patch
    opatch apply -silent
-   # Get return code
-   return_code=$?
-   # Error applying the patch, abort
-   if [ "$return_code" != "0" ]; then
-      exit $return_code;
-   fi; 
+
    # Go back out of patch directory
    cd ../
    # Clean up patch directory (-f needed because some files 
    # in patch directory may not have write permissions)
-   rm -rf */
-   # Delete any xml artifacts if present.
-   rm -f *.xml
+   # rm -rf */
+   # # Delete any xml artifacts if present.
+   # rm -f *.xml
    # Go back into root directory
-   cd ../
 done;
 
 cd $HOME
